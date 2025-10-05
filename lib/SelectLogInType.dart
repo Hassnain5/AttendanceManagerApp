@@ -4,6 +4,7 @@ import 'package:first_app/UserModule/BottomNavContainer.dart';
 import 'package:first_app/UserModule/UserDashboard.dart';
 import 'package:first_app/UserModule/UserLogin.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SelectLogInType extends StatelessWidget {
   @override
@@ -15,9 +16,10 @@ class SelectLogInType extends StatelessWidget {
       if(isLoggedIn){
         Navigator.push(context, MaterialPageRoute(builder: (context)=> BottomNavContainer(userId: userId,)));
 
+
       }
       else
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> UserLogIn()));
+        context.go("/userLogin");
 
     }
     return Scaffold(
@@ -71,8 +73,8 @@ class SelectLogInType extends StatelessWidget {
 
                 child: InkWell(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> AdminLogInPage()));
 
+                    context.go("/adminLogin");
                   },
                   child: Container(
                     decoration: BoxDecoration(

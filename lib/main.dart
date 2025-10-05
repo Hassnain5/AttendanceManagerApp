@@ -4,14 +4,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:first_app/APITestScreen.dart';
 import 'package:first_app/Admin_module/AdminDashboard.dart';
 import 'package:first_app/Admin_module/AdminLogInPage.dart';
+import 'package:first_app/Admin_module/AdminProviders/LeaveManagmentProvider.dart';
+import 'package:first_app/Admin_module/AdminProviders/StudentReportProvider.dart';
+import 'package:first_app/Admin_module/AdminProviders/SysytemReportProvider.dart';
 import 'package:first_app/Providers/AttendanceCountProvider.dart';
 import 'package:first_app/Providers/AttendenceListProvider.dart';
-import 'package:first_app/Providers/ChangeColorProvider.dart';
+// import 'package:first_app/AdminProviders/EditStudentsAttendanceProvider.dart';
 import 'package:first_app/Providers/CounterProvider.dart';
 import 'package:first_app/Providers/LeaveRequestDatesProvider.dart';
 import 'package:first_app/Providers/MapListProvider.dart';
 import 'package:first_app/Providers/ProfileImageProvider.dart';
+import 'package:first_app/Providers/SignUpPageProvider.dart';
 import 'package:first_app/Providers/ThemeProvider.dart';
+import 'package:first_app/Router/AppRouter.dart';
 import 'package:first_app/SelectLogInType.dart';
 import 'package:first_app/SignUpPage.dart';
 import 'package:first_app/SplashScreen.dart';
@@ -19,6 +24,10 @@ import 'package:first_app/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'Admin_module/AdminProviders/AddStudentsAttendanceProvider.dart';
+import 'Admin_module/AdminProviders/DeleteStudentsAttendanceProvider.dart';
+import 'Admin_module/AdminProviders/EditStudentsAttendanceProvider.dart';
+import 'Providers/WeatherProvider.dart';
 import 'firebase_options.dart';
 
 
@@ -47,13 +56,20 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (_) => ProfileImageProvider()),
           ChangeNotifierProvider(create: (_) => AttendanceCountProvider()),
           ChangeNotifierProvider(create: (_) => CounterProvider()),
-          ChangeNotifierProvider(create: (_) => ChangeColorProvider()),
+          ChangeNotifierProvider(create: (_) => EditStudentsAttendanceProvider()),
+          ChangeNotifierProvider(create: (_) => DeleteStudentsAttendanceProvider()),
           ChangeNotifierProvider(create: (_) => MapListProvider()),
-          ChangeNotifierProvider(create: (_) => ThemeProvider()),
+          ChangeNotifierProvider(create: (_) => StudentReportProvider()),
+          ChangeNotifierProvider(create: (_) => SysytemReportProvider()),
+          ChangeNotifierProvider(create: (_) => LeaveManagmentProvider()),
+          ChangeNotifierProvider(create: (_) => AddStudentsAttendanceProvider()),
+          ChangeNotifierProvider(create: (_) => WeatherProvider()),
+          ChangeNotifierProvider(create: (_) => SignUpPageProvider()),
         ],
-     child: MaterialApp(
+     child: MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
+routerConfig: AppRouter.router,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -75,10 +91,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade900),
         useMaterial3: true,
       ),
-      home:
-           AdminDashboard(),
 
-    ));
+
+    )
+    );
   }
 }
 

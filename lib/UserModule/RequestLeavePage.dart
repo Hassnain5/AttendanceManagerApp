@@ -39,7 +39,7 @@ class RequestLeavePage extends StatelessWidget {
 
       for(int i=0; i<datesProvider.selectedDates.length; i++){
         final dates = datesProvider.selectedDates[i];
-        final formatedDate= "${dates.day}-${dates.month}-${dates.year}";
+        final formatedDate= "${dates.year}-${dates.month.toString().padLeft(2, '0')}-${dates.day.toString().padLeft(2, '0')}";
         await FirebaseFirestore.instance.collection("Students").doc(userId).collection("Attendence")
             .doc(formatedDate).set({
           "markedAt" :formatedDate,
@@ -99,7 +99,7 @@ class RequestLeavePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Request Leave"),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -112,10 +112,10 @@ class RequestLeavePage extends StatelessWidget {
               ElevatedButton(
                 onPressed: _pickDate,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.indigo,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text("Add Date"),
+                child: const Text("Add Date", style: TextStyle(color: Colors.white),),
               ),
 
                Expanded(child: DatesListWidget()),
@@ -178,10 +178,10 @@ class RequestLeavePage extends StatelessWidget {
               }
                         } ,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.indigo,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: const Text("Request Leave", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            child: const Text("Request Leave", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
           ),
         ),
       ),

@@ -16,7 +16,18 @@ class UserDashBoard extends StatelessWidget {
 
     DocumentSnapshot userDoc= await _firestore.collection("Students").doc(uid).get();
     if(userDoc.exists) {var data = userDoc.data() as Map<String, dynamic>;
-   return data["Name"] ?? "Unknown User!";
+    return data["Name"] ?? "Unknown User!";
+      // print("Contact: ${data["ContactNumber"]}");
+    }else {
+      return "Not Found !";
+
+    }
+  }
+  Future<String> getProfilePicture()async {
+
+    DocumentSnapshot userDoc= await _firestore.collection("Students").doc(uid).get();
+    if(userDoc.exists) {var data = userDoc.data() as Map<String, dynamic>;
+    return data["profilePic"] ?? "";
       // print("Contact: ${data["ContactNumber"]}");
     }else {
       return "Not Found !";
@@ -107,12 +118,26 @@ class UserDashBoard extends StatelessWidget {
             actions: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage("assets/images/profile.png"),
+                child: FutureBuilder(
+                  future: getProfilePicture(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text("User not found"));
+                    }
+
+                    final userData = snapshot.data!;
+                    return  CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(userData),
+                    );
+                  },
+
                 ),
               )
             ],
+
           ),
         ),
       ),

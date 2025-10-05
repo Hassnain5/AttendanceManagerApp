@@ -178,7 +178,7 @@ class MarkAttendencePage extends StatelessWidget {
 
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text("Attendance marked successfully! "),
+                  content: const Text("Attendance marked successfully! "),
                   backgroundColor: Colors.green,
                 ),
               );

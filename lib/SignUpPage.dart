@@ -1,69 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_app/Providers/SignUpPageProvider.dart';
 import 'package:first_app/UserModule/UserLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:first_app/custom_widgets/CustomTextField.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPage extends StatelessWidget {
    SignUpPage({super.key});
-  TextEditingController nameController = TextEditingController();
+   TextEditingController nameController = TextEditingController();
+   TextEditingController classController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController contactController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
-  // bool nameError =false;
-  // bool emailError =false;
-  // bool contactError =false;
-  // bool passwordError =false;
-  // bool confirmPasswordError =false;
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-
   @override
   Widget build(BuildContext context) {
 
-    Future<void> _signup() async{
-      try{
-        UserCredential userCredential= await _auth.createUserWithEmailAndPassword(email: emailController.text.trim(), password: passwordController.text.trim());
-        print("User created: ${userCredential.user?.uid}");
-        await _firestore.collection("Students").doc(userCredential.user!.uid).set({
-        "Name" : nameController.text.trim(),
-        "Email" : emailController.text.trim(),
-        "ContactNumber" : contactController.text.trim(),
-      });
-        nameController.clear();
-        emailController.clear();
-        contactController.clear();
-        passwordController.clear();
-        confirmPasswordController.clear();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.red.shade300,
-            content: Text("SignUp Sucessfull", style: TextStyle(color: Colors.white),)));
+    final provider = Provider.of<SignUpPageProvider>(context, listen: false);
 
-      }on FirebaseAuthException catch (e){
-        String message = "Signup failed";
-        if (e.code== 'email-already-in-use'){
-          message = "This email is already registered.";
-        }
-        else if (e.code == 'weak-password') {
-          message = "Password is too weak.";
-        }
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.red.shade300,
-            content: Text("$message\n $e", style: TextStyle(color: Colors.white),)));
-
-      }
-
-      catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("An error occurred. $e")),
-        );
-      }
-    }
 
 
     return Scaffold(
@@ -99,6 +55,13 @@ class SignUpPage extends StatelessWidget {
                   controller: nameController,
                 ),
                 const SizedBox(height: 20),
+
+                CustomTextField(
+                  lable: "Student Class",
+                  hintText: "Enter your class",
+                  controller: classController,
+                ),
+                const SizedBox(height: 20),
                 CustomTextField(
                   lable: "Email Address",
                   hintText: "example@space.com",
@@ -129,38 +92,75 @@ class SignUpPage extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      String name = nameController.text.trim();
-                      String email = emailController.text.trim();
-                      String contactNumber = contactController.text.trim();
-                      String password = passwordController.text.trim();
-                      String confirmPassword = confirmPasswordController.text.trim();
+                  child: Consumer<SignUpPageProvider>(
+                    builder: ( context, prov , _) {
+                      return
+                     ElevatedButton(
+                      onPressed: prov.isLoading? (){}:() async {
+                        String name = nameController.text.trim();
+                        String email = emailController.text.trim();
+                        String contactNumber = contactController.text.trim();
+                        String studentClass = classController.text.trim();
+                        String password = passwordController.text.trim();
+                        String confirmPassword = confirmPasswordController.text.trim();
 
 
-                      if(name.isEmpty ||email.isEmpty ||contactNumber.isEmpty
-                          ||password.isEmpty ||confirmPassword.isEmpty ){
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            backgroundColor: Colors.red.shade300,
-                            content: Text("Please fill all feilds !", style: TextStyle(color: Colors.white),)));
+                        if(name.isEmpty ||email.isEmpty ||contactNumber.isEmpty || studentClass.isEmpty
+                            ||password.isEmpty ||confirmPassword.isEmpty ){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Colors.red.shade300,
+                              content: Text("Please fill all feilds !", style: TextStyle(color: Colors.white),)));
 
-                      }else if(password!=confirmPassword){
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            backgroundColor: Colors.red.shade300,
-                            content: Text("Password does'nt match", style: TextStyle(color: Colors.white),)));
+                        }else if(password!=confirmPassword){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Colors.red.shade300,
+                              content: Text("Password does'nt match", style: TextStyle(color: Colors.white),)));
 
-                      }
-                      else
-                        _signup();
+                        }
+                        else{
+                          prov.name=name;
+                        prov.email=email;
+                          prov.contactNumber=contactNumber;
+                          prov.studentClass=studentClass;
+                          prov.password=password;
+
+                          bool success = await prov.signUp(); // <- make signUp return true/false
+
+                          if (success) {
+                            nameController.clear();
+                            classController.clear();
+                            emailController.clear();
+                            contactController.clear();
+                            passwordController.clear();
+                            confirmPasswordController.clear();
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.grey.shade300,
+                                content: const Text("SignUp Successful", style: TextStyle(color: Colors.black)),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.red.shade300,
+                                content: const Text("SignUp Failed. Try again!", style: TextStyle(color: Colors.white)),
+                              ),
+                            );
+                          }
+
+                      }},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: prov.isLoading? Colors.grey: Colors.blue,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: const Text(
+                        "Create Account",
+                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: const Text(
-                      "Create Account",
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
+
                   ),
                 ),
                 const SizedBox(height: 20),

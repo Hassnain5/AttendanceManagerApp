@@ -73,7 +73,7 @@ class UserProfileScreen extends StatelessWidget {
                 ProfileHeader(
                   name: userData["Name"] ?? "Unknown User",
                   email: userData["Email"] ?? "No email",
-                  profileImage: "assets/images/profile.png",
+                  profileImage: userData["profilePic"]?? "",
                   stats: const {"Presents": 12, "Leaves": 6, "Absents": 4},
                 ),
 
@@ -97,9 +97,9 @@ class UserProfileScreen extends StatelessWidget {
                 ),
 
                 /// Other Section
-                ProfileMenuSection(
+                const ProfileMenuSection(
                   title: "Other",
-                  items: const [
+                  items: [
                     ProfileMenuItem(icon: Icons.cleaning_services, title: "Clear Cache"),
                     ProfileMenuItem(icon: Icons.help, title: "Help Center"),
                     ProfileMenuItem(icon: Icons.description, title: "Terms and Conditions"),

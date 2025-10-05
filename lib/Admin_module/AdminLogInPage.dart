@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_app/Admin_module/AdminDashboard.dart';
 import 'package:first_app/custom_widgets/CustomTextField.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AdminLogInPage extends StatelessWidget{
   TextEditingController userNameController = TextEditingController();
@@ -17,11 +18,7 @@ var data;
       if(userDoc.exists) { data = userDoc.data() as Map<String, dynamic>;
       if (userNameController.text.trim()== data["UserName"] && passwordController.text.trim() == data["Password"]){
         print("Logged in as Admin Sucessfuly");
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AdminDashboard()),
-        );
+        context.go("/adminDashboard");
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Logged in as Admin Sucessfuly")));
       }else if(userNameController.text.trim()!= data["UserName"]){
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User name not found !!")));

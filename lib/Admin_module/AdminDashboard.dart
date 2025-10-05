@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_app/custom_widgets/AttendenceCategory.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:go_router/go_router.dart';
 
 import 'AdminCustomWidgets/StatCard.dart';
 
@@ -47,10 +48,18 @@ class AdminDashboard extends StatelessWidget {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
                 childAspectRatio: 0.9,
-                children: const [
-                  AttendenceCategory(title: "Manage Attendance", imagePath: "assets/icons/ic_manage_attendance.png",),
-                  AttendenceCategory(title: "Manage Leave Requests", imagePath: "assets/icons/ic_manage_leave.png",),
-                  AttendenceCategory(title: "Generate Report", imagePath: "assets/icons/ic_report.png",),
+                children: [
+                  InkWell(
+                      onTap: ()=>context.go("/selectClassScreen"),
+                      child: const AttendenceCategory(title: "Manage Attendance", imagePath: "assets/icons/ic_manage_attendance.png",)),
+                  InkWell(
+                      onTap: ()=>context.go("/manageLeaves"),
+
+                      child: const AttendenceCategory(title: "Manage Leave Requests", imagePath: "assets/icons/ic_manage_leave.png",)),
+                  InkWell(
+                      onTap: ()=>context.go("/selectReportTypeScreen"),
+
+                      child: const AttendenceCategory(title: "Generate Report", imagePath: "assets/icons/ic_report.png",)),
                 ],
               ),
 
